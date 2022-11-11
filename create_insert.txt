@@ -1,0 +1,83 @@
+CREATE TABLE Users(
+userId BIGSERIAL PRIMARY KEY,
+age INT
+);
+
+INSERT INTO users(age)
+SELECT  floor(random()*(60-18+1))+18::integer
+FROM generate_series(1, 1000);
+
+
+
+CREATE TABLE Purchases(
+purchaseId BIGSERIAL,
+userId BIGSERIAL PRIMARY KEY,
+itemId INT,
+date TIMESTAMP
+);
+
+INSERT INTO purchases (itemId, date)
+SELECT  floor(random()*(50-1+1))+1::integer, DATE '2018-01-01' + (random() * 700)::integer
+FROM generate_series(1, 1000);
+
+
+CREATE TABLE Items(
+itemId INT,
+price INT
+);
+
+INSERT INTO items
+(SELECT DISTINCT(itemid), price FROM(
+  SELECT *, CASE 
+    WHEN itemid = '1' then 500
+    WHEN itemid = '2' then 540
+    WHEN itemid = '3' then 200
+    WHEN itemid = '4' then 650
+    WHEN itemid = '5' then 120
+    WHEN itemid = '6' then 640
+    WHEN itemid = '7' then 750
+    WHEN itemid = '8' then 310
+    WHEN itemid = '9' then 260
+    WHEN itemid = '10' then 900
+    WHEN itemid = '11' then 950
+    WHEN itemid = '12' then 540
+    WHEN itemid = '13' then 500
+    WHEN itemid = '14' then 540
+    WHEN itemid = '15' then 340
+    WHEN itemid = '16' then 230
+    WHEN itemid = '17' then 570
+    WHEN itemid = '18' then 290
+    WHEN itemid = '19' then 140
+    WHEN itemid = '20' then 570
+    WHEN itemid = '21' then 480
+    WHEN itemid = '22' then 310
+    WHEN itemid = '23' then 410
+    WHEN itemid = '24' then 740
+    WHEN itemid = '25' then 390
+    WHEN itemid = '26' then 500
+    WHEN itemid = '27' then 540
+    WHEN itemid = '28' then 200
+    WHEN itemid = '29' then 650
+    WHEN itemid = '30' then 120
+    WHEN itemid = '31' then 640
+    WHEN itemid = '32' then 750
+    WHEN itemid = '33' then 310
+    WHEN itemid = '34' then 260
+    WHEN itemid = '35' then 900
+    WHEN itemid = '36' then 950
+    WHEN itemid = '37' then 540
+    WHEN itemid = '38' then 500
+    WHEN itemid = '39' then 540
+    WHEN itemid = '40' then 340
+    WHEN itemid = '41' then 230
+    WHEN itemid = '42' then 570
+    WHEN itemid = '43' then 290
+    WHEN itemid = '44' then 140
+    WHEN itemid = '45' then 570
+    WHEN itemid = '46' then 480
+    WHEN itemid = '47' then 310
+    WHEN itemid = '48' then 410
+    WHEN itemid = '49' then 740
+    WHEN itemid = '50' then 390
+  END AS price
+  FROM purchases) AS qwe)
