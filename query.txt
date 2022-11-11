@@ -1,3 +1,5 @@
+А)
+
 SELECT * FROM 
   (SELECT ROUND(AVG(mean_price)) AS avarge_18_25 FROM(
     SELECT AVG(price) AS mean_price
@@ -20,6 +22,8 @@ SELECT * FROM
     GROUP BY to_char(b.date, 'YYYY-MM')) AS avarge_26_35) AS r
 ON l.avarge_18_25 = r.avarge_26_35;
 
+Б)
+
 SELECT EXTRACT(MONTH FROM a.date) AS month, SUM(b.price) AS price
 FROM purchases AS a
 INNER JOIN items AS b
@@ -30,6 +34,8 @@ WHERE c.age > 35
 GROUP BY EXTRACT(MONTH FROM a.date)
 ORDER BY price DESC
 LIMIT 1;
+
+В)
 
 SELECT itemid, price FROM(
 SELECT a.itemid AS itemid, SUM(a.price) AS price
@@ -49,6 +55,8 @@ WHERE price =
   GROUP BY a.itemid
   ORDER BY price DESC) AS qwerty);
   
+Г)
+
 SELECT 
     a.itemid, 
     (SELECT SUM(a.price) AS price
