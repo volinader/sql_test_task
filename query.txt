@@ -1,0 +1,73 @@
+SELECT * FROM 
+  (SELECT ROUND(AVG(mean_price)) AS avarge_18_25 FROM(
+    SELECT AVG(price) AS mean_price
+    FROM users AS a
+    INNER JOIN purchases AS b
+    ON a.userid = b.userid
+    INNER JOIN items AS c
+    ON b.itemid = c.itemid
+    WHERE age BETWEEN 18 AND 25
+    GROUP BY to_char(b.date, 'YYYY-MM')) AS avarge_18_25) AS l
+  FULL OUTER JOIN 
+  (SELECT ROUND(AVG(mean_price)) AS avarge_26_35 FROM(
+    SELECT AVG(price) AS mean_price
+    FROM users AS a
+    INNER JOIN purchases AS b
+    ON a.userid = b.userid
+    INNER JOIN items AS c
+    ON b.itemid = c.itemid
+    WHERE age BETWEEN 26 AND 35
+    GROUP BY to_char(b.date, 'YYYY-MM')) AS avarge_26_35) AS r
+ON l.avarge_18_25 = r.avarge_26_35;
+
+SELECT EXTRACT(MONTH FROM a.date) AS month, SUM(b.price) AS price
+FROM purchases AS a
+INNER JOIN items AS b
+ON a.itemid = b.itemid
+INNER JOIN users AS c
+ON c.userid = a.userid
+WHERE c.age > 35
+GROUP BY EXTRACT(MONTH FROM a.date)
+ORDER BY price DESC
+LIMIT 1;
+
+SELECT itemid, price FROM(
+SELECT a.itemid AS itemid, SUM(a.price) AS price
+FROM items AS a
+INNER JOIN purchases AS b
+ON b.itemid = a.itemid
+WHERE EXTRACT(YEAR FROM b.date) = (SELECT EXTRACT(YEAR FROM MAX(date)) FROM purchases)
+GROUP BY a.itemid
+ORDER BY price DESC) AS qwerty
+WHERE price = 
+  (SELECT MAX(price) FROM(
+  SELECT a.itemid AS itemid, SUM(a.price) AS price
+  FROM items AS a
+  INNER JOIN purchases AS b
+  ON b.itemid = a.itemid
+  WHERE EXTRACT(YEAR FROM b.date) = (SELECT EXTRACT(YEAR FROM MAX(date)) FROM purchases)
+  GROUP BY a.itemid
+  ORDER BY price DESC) AS qwerty);
+  
+SELECT 
+    a.itemid, 
+    (SELECT SUM(a.price) AS price
+    FROM items AS a
+    INNER JOIN purchases AS b
+    ON b.itemid = a.itemid
+    WHERE EXTRACT(YEAR FROM b.date) = 2019
+    GROUP BY EXTRACT(YEAR FROM b.date)
+    ) AS total_revenue_2019, 
+    SUM(b.price) AS sum_price, 
+    ROUND(SUM(b.price) * 100 / (SELECT SUM(a.price) AS price
+    FROM items AS a
+    INNER JOIN purchases AS b
+    ON b.itemid = a.itemid
+    WHERE EXTRACT(YEAR FROM b.date) = 2019
+    GROUP BY EXTRACT(YEAR FROM b.date))::numeric, 2) AS percentage_from_total_revenue_2019
+FROM purchases AS a
+INNER JOIN items AS b
+ON a.itemid = b.itemid
+GROUP BY a.itemid
+ORDER BY sum_price DESC
+LIMIT 3;
